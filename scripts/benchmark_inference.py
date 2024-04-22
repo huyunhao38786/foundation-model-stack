@@ -13,6 +13,8 @@ from torch._dynamo import OptimizedModule
 from fms import models
 from fms.utils import generation, print0, tokenizers
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
 
 # Example running llama 7B on one A100:
 #
@@ -159,8 +161,10 @@ if world_size > 1:
     torch._C._distributed_c10d._register_process_group("default", dist.group.WORLD)
 
 print("loading model")
-model = models.get_model(args.architecture, args.variant, device_type=args.device_type)
-tokenizer = tokenizers.get_tokenizer(args.tokenizer)
+# model = models.get_model(args.architecture, args.variant, device_type=args.device_type)
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B")
+# tokenizer = tokenizers.get_tokenizer(args.tokenizer)
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
 
 model.eval()
 torch.set_grad_enabled(False)
