@@ -162,7 +162,7 @@ if world_size > 1:
 
 print("loading model")
 # model = models.get_model(args.architecture, args.variant, device_type=args.device_type)
-model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B")
+model = AutoModelForCausalLM.from_pretrained("meta-llama/Meta-Llama-3-8B").to(device)
 # tokenizer = tokenizers.get_tokenizer(args.tokenizer)
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3-8B")
 
