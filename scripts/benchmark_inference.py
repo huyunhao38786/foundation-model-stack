@@ -175,7 +175,7 @@ BATCH_SIZE = args.batch_size
 MAX_NEW_TOKENS = args.max_new_tokens
 
 ids = torch.randint(
-    tokenizer.vocab_size(), (BATCH_SIZE, SEQ_LEN), device=device, dtype=torch.long
+    tokenizer.vocab_size, (BATCH_SIZE, SEQ_LEN), device=device, dtype=torch.long
 )
 
 # This first forward call generates the cache for use in cases where
