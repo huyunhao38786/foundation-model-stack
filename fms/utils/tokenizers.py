@@ -3,7 +3,6 @@ from typing import List, Optional, Union
 
 import torch
 import torch.nn.functional as F
-from transformers import AutoTokenizer
 
 from fms import utils
 
@@ -82,31 +81,27 @@ class _SentencePieceTokenizer(BaseTokenizer):
     """
 
     def __init__(self, path: str):
-        # Load the tokenizer using AutoTokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(path)
-        super().__init__(self.tokenizer.bos_token_id, self.tokenizer.eos_token_id)
+        from sentencepiece import SentencePieceProcessor  # type: ignore
 
-    def tokenize(self, text: str) -> List[str]:
-        # Encode the text to tokens and return only the tokens, without special tokens
-        return self.tokenizer.tokenize(text)
+        self.sp_model = SentencePieceProcessor(model_file=path)
+        super().__init__(self.sp_model.bos_id(), self.sp_model.eos_id())
 
-    def convert_ids_to_tokens(self, ids: Union[List[int], torch.LongTensor]) -> List[str]:
-        # Convert a list of IDs or a tensor to tokens
+    def tokenize(self, text: str):
+        return self.sp_model.encode_as_pieces(text)
+
+    def convert_ids_to_tokens(self, ids: Union[List[int], torch.LongTensor]):
         if isinstance(ids, torch.Tensor):
             ids = ids.tolist()
-        return self.tokenizer.convert_ids_to_tokens(ids)
+        return self.sp_model.id_to_piece(ids)
 
-    def convert_tokens_to_ids(self, tokens: List[str]) -> List[int]:
-        # Convert a list of tokens to their IDs
-        return self.tokenizer.convert_tokens_to_ids(tokens)
+    def convert_tokens_to_ids(self, tokens: list[str]):
+        return self.sp_model.piece_to_id(tokens)
 
-    def convert_tokens_to_string(self, tokens: List[str]) -> str:
-        # Convert a list of tokens to a string
-        return self.tokenizer.convert_tokens_to_string(tokens)
+    def convert_tokens_to_string(self, tokens: list[str]):
+        return self.sp_model.decode(tokens)
 
-    def vocab_size(self) -> int:
-        # Return the size of the vocabulary
-        return len(self.tokenizer)
+    def vocab_size(self):
+        return self.sp_model.vocab_size()
 
 
 class _HFTokenizer(BaseTokenizer):
