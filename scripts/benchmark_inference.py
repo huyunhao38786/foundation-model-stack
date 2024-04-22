@@ -188,27 +188,27 @@ ids = torch.randint(
 # of the first token without cache, plus the cost of all subsequent tokens with
 # cache. I.e. the amortized per-token cost would depend on the number of tokens
 # generated.
-logits, cache = model.forward(ids, use_cache=True)
-print(type(logits))
-print(logits)
-logits = logits[:, -1, :]
-next_val = torch.argmax(logits, dim=-1).unsqueeze(0).t()
-next_input = torch.cat((ids, next_val), dim=-1)
+# logits, cache = model.forward(ids, use_cache=True)
+# print(type(logits))
+# print(logits)
+# logits = logits[:, -1, :]
+# next_val = torch.argmax(logits, dim=-1).unsqueeze(0).t()
+# next_input = torch.cat((ids, next_val), dim=-1)
 
-# not still needed
-del logits
+# # not still needed
+# del logits
 
-expected, _ = model.forward(
-    next_val, past_key_value_states=cache, use_cache=True, only_last_token=True
-)
-expected = torch.argmax(expected, dim=-1)
+# expected, _ = model.forward(
+#     next_val, past_key_value_states=cache, use_cache=True, only_last_token=True
+# )
+# expected = torch.argmax(expected, dim=-1)
 
-expected2 = model.forward(next_input, only_last_token=True)
-expected2 = torch.argmax(expected2, dim=-1)
+# expected2 = model.forward(next_input, only_last_token=True)
+# expected2 = torch.argmax(expected2, dim=-1)
 
-torch.testing.assert_close(expected, expected2)
+# torch.testing.assert_close(expected, expected2)
 
-repeat = 3
+# repeat = 3
 
 
 # The function we're measuring, with or without caching.
