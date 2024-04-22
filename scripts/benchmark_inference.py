@@ -189,6 +189,8 @@ ids = torch.randint(
 # cache. I.e. the amortized per-token cost would depend on the number of tokens
 # generated.
 logits, cache = model.forward(ids, use_cache=True)
+print(type(logits))
+print(logits)
 logits = logits[:, -1, :]
 next_val = torch.argmax(logits, dim=-1).unsqueeze(0).t()
 next_input = torch.cat((ids, next_val), dim=-1)
